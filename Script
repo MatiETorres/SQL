@@ -1,0 +1,76 @@
+CREATE DATABASE RecursosHumanos;
+USE RecursosHumanos;
+
+CREATE TABLE Departamento (
+    id_dpto INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(100)
+);
+
+CREATE TABLE Puesto (
+    id_puesto INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(100),
+    id_dpto INT
+);
+
+CREATE TABLE ObraSocial (
+    id_obra INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    direccion VARCHAR(100)
+);
+
+CREATE TABLE Empleado (
+    legajo INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    dni CHAR(8) UNIQUE NOT NULL,
+    fecha_nac DATE NOT NULL,
+    edad INT,
+    lugar_nacimiento VARCHAR(100),
+    id_puesto INT,
+    id_dpto INT,
+    id_obra INT,
+    telefono VARCHAR(20),
+    email VARCHAR(50)
+);
+
+CREATE TABLE Asistencia (
+    id_asistencia INT PRIMARY KEY AUTO_INCREMENT,
+    legajo INT NOT NULL,
+    fecha DATE NOT NULL,
+    estado ENUM('Presente', 'Ausente', 'Licencia', 'Tardanza') NOT NULL
+);
+
+CREATE TABLE ContactoEmergencia (
+    id_contacto INT PRIMARY KEY AUTO_INCREMENT,
+    legajo INT NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    parentesco VARCHAR(30)
+);
+
+ALTER TABLE Puesto
+  ADD CONSTRAINT fk_puesto_departamento
+  FOREIGN KEY (id_dpto) REFERENCES Departamento(id_dpto);
+
+ALTER TABLE Empleado
+  ADD CONSTRAINT fk_empleado_puesto
+  FOREIGN KEY (id_puesto) REFERENCES Puesto(id_puesto);
+
+ALTER TABLE Empleado
+  ADD CONSTRAINT fk_empleado_departamento
+  FOREIGN KEY (id_dpto) REFERENCES Departamento(id_dpto);
+
+ALTER TABLE Empleado
+  ADD CONSTRAINT fk_empleado_obrasocial
+  FOREIGN KEY (id_obra) REFERENCES ObraSocial(id_obra);
+
+ALTER TABLE Asistencia
+  ADD CONSTRAINT fk_asistencia_empleado
+  FOREIGN KEY (legajo) REFERENCES Empleado(legajo);
+
+ALTER TABLE ContactoEmergencia
+  ADD CONSTRAINT fk_contacto_emergencia_empleado
+  FOREIGN KEY (legajo) REFERENCES Empleado(legajo);
